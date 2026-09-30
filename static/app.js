@@ -32,6 +32,30 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ---------------------------------------------------------------------------
+// 0. Segmented Dock Tab Navigation
+// ---------------------------------------------------------------------------
+function switchDockTab(tabKey, btnEl) {
+  // Update button active state
+  document.querySelectorAll(".dock-segmented-tabs .dock-tab-btn").forEach(b => b.classList.remove("active"));
+  if (btnEl) {
+    btnEl.classList.add("active");
+  } else {
+    const btn = document.getElementById(`btn-tab-${tabKey}`);
+    if (btn) btn.classList.add("active");
+  }
+
+  // Update pane active state
+  document.querySelectorAll(".dock-pane").forEach(p => p.classList.remove("active"));
+  const targetPane = document.getElementById(`pane-dock-${tabKey}`);
+  if (targetPane) targetPane.classList.add("active");
+
+  // Invalidate Leaflet map size to prevent any rendering seams
+  if (map) {
+    setTimeout(() => { map.invalidateSize(); }, 50);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // 1. Clock & System Telemetry
 // ---------------------------------------------------------------------------
 function initLiveClock() {
@@ -715,8 +739,13 @@ async function loadIsolatedZones() {
     if (!res.ok) return;
     const data = await res.json();
 
-    document.getElementById("txt-isolated-summary").innerText = 
-      `CUT-OFF: ${data.total_cutoff_population.toLocaleString()} (${data.isolated_zones_count} Zones)`;
+    const badgeIso = document.getElementById("badge-tab-isolated-count");
+    if (badgeIso) badgeIso.innerText = data.isolated_zones_count;
+
+    const summaryIso = document.getElementById("txt-isolated-summary");
+    if (summaryIso) {
+      summaryIso.innerText = `CUT-OFF: ${(data.total_cutoff_population / 1000).toFixed(1)}K (${data.isolated_zones_count})`;
+    }
 
     const container = document.getElementById("container-isolated-zones");
     container.innerHTML = "";
@@ -899,23 +928,15 @@ async function loadRecentReports() {
     const feed = document.getElementById("incident-feed-list");
     feed.innerHTML = "";
 
-    data.reports.slice(0, 6).forEach(rep => {
+    data.reports.slice(0, 3).forEach(rep => {
       const item = document.createElement("div");
-      item.style.background = "var(--bg-surface)";
-      item.style.border = "1px solid var(--border-subtle)";
-      item.style.borderRadius = "var(--radius-sm)";
-      item.style.padding = "8px 10px";
-      item.style.fontSize = "0.72rem";
-
+      item.className = "stream-item";
       const isPass = rep.ambulance_passable;
       item.innerHTML = `
-        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-          <strong style="color:#ffffff;">${rep.location_name}</strong>
-          <span style="color:${isPass ? 'var(--color-safe-green)' : 'var(--color-alert-red)'}; font-weight:700;">
-            ${isPass ? 'PASSABLE' : 'IMPASSABLE'} (${rep.estimated_water_depth_m}m)
-          </span>
-        </div>
-        <div style="color:var(--text-secondary); line-height:1.3;">${rep.text}</div>
+        <span class="time">${rep.location_name.split(",")[0]}:</span> 
+        <span style="color:${isPass ? 'var(--color-safe-green)' : 'var(--color-alert-red)'}; font-weight:600;">
+          ${isPass ? 'Passable' : 'Impassable'} (${rep.estimated_water_depth_m}m)
+        </span>
       `;
       feed.appendChild(item);
     });
@@ -930,13 +951,12 @@ function logTacticalEvent(msg) {
   if (!feed) return;
   const time = new Date().toLocaleTimeString("en-IN", { hour12: false });
   const item = document.createElement("div");
-  item.style.background = "rgba(66, 133, 244, 0.08)";
-  item.style.border = "1px solid rgba(66, 133, 244, 0.3)";
-  item.style.borderRadius = "var(--radius-sm)";
-  item.style.padding = "6px 8px";
-  item.style.fontSize = "0.7rem";
-  item.innerHTML = `<span style="color:#60a5fa; font-family:var(--font-mono); font-weight:600;">[${time}]</span> <span style="color:#ffffff;">${msg}</span>`;
+  item.className = "stream-item";
+  item.innerHTML = `<span class="time">[${time}]</span> <span>${msg}</span>`;
   feed.insertBefore(item, feed.firstChild);
+  while (feed.children.length > 4) {
+    feed.removeChild(feed.lastChild);
+  }
 }
 
 // ---------------------------------------------------------------------------
