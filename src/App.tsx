@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
-import { CustomCursor } from './components/CustomCursor';
 import { Navigation } from './components/Navigation';
 import { Hero } from './components/Hero';
 import { Marquee } from './components/Marquee';
 import { Projects } from './components/Projects';
 import { CurrentBuild } from './components/CurrentBuild';
 import { Learning } from './components/Learning';
-import { LongTermProject } from './components/LongTermProject';
 import { FocusAndProcess } from './components/FocusAndProcess';
-import { SkillsAndJourney } from './components/SkillsAndJourney';
-import { Faq } from './components/Faq';
+import { About } from './components/About';
+import { Journey } from './components/Journey';
 import { FinalCTA } from './components/FinalCTA';
 import { Footer } from './components/Footer';
 
@@ -17,85 +15,93 @@ export function App() {
   const [activeSection, setActiveSection] = useState<string>('hero');
 
   useEffect(() => {
-    const sectionIds = ['hero', 'work', 'pravah', 'learning', 'wildlife', 'focus-process', 'about', 'faq', 'contact'];
+    const sectionIds = ['hero', 'work', 'pravah', 'learning', 'about', 'journey', 'contact'];
 
-    const handleScroll = () => {
-      const scrollY = window.scrollY + 200;
-
-      for (const id of sectionIds) {
-        const el = document.getElementById(id);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollY >= top && scrollY < top + height) {
-            setActiveSection(id);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
             break;
           }
         }
+      },
+      {
+        rootMargin: '-20% 0px -60% 0px',
+        threshold: 0,
       }
-    };
+    );
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   return (
     <div className="relative min-h-screen bg-[#F4F2EC] text-[#111111] overflow-x-hidden selection:bg-[#FF4500] selection:text-white font-sans">
-      {/* Interactive Custom Cursor for desktop */}
-      <CustomCursor />
-
       {/* Sticky Navigation Header */}
       <Navigation activeSection={activeSection} />
 
-      {/* Main Content Sections with alternating visual rhythm */}
+      {/* Main Content Sections: PERSON → WORK → CURRENT BUILD → LEARNING → STORY → JOURNEY → CONTACT */}
       <main id="main-content">
-        {/* 01: Hero Section (Light #F4F2EC) */}
+        {/* [01] Hero Section (Light #F4F2EC) — The Person */}
         <Hero />
 
-        {/* Marquee 01 (Dark Ribbon) */}
-        <Marquee variant="dark" skew={false} />
-
-        {/* 02: Selected Work (Light #F4F2EC) */}
-        <Projects />
-
-        {/* Marquee 02 (Orange Accent Ribbon - Visual Bridge) */}
+        {/* Typographic Ribbon 01 */}
         <Marquee
-          variant="orange"
+          variant="dark"
           items={[
-            'SYSTEMS ENGINEERING',
-            'PRAVAH // BUILD 001',
-            'OFFLINE-FIRST',
-            'DYNAMIC ROUTE INTELLIGENCE',
-            'RAIPUR TOPOLOGY',
-            'A* GRAPH ROUTING',
-            'GEOSPATIAL RASTER',
+            'UDAY SAHU',
+            'DEVELOPER',
+            'BUILDER',
+            'PROBLEM SOLVER',
+            'PRACTICAL SOFTWARE',
+            'RAIPUR · INDIA',
+            'C++ & TYPESCRIPT',
           ]}
           skew={false}
         />
 
-        {/* 03: Currently Building — PRAVAH (Dark #111111) */}
+        {/* [02] Selected Projects (Light #F4F2EC) — The Work */}
+        <Projects />
+
+        {/* Typographic Ribbon 02 */}
+        <Marquee
+          variant="orange"
+          items={[
+            'SYSTEMS ENGINEERING',
+            'ROUTE INTELLIGENCE',
+            'DSA WITH C++',
+            'HACKATHONS',
+            'OPEN SOURCE',
+            'RAPID PROTOTYPING',
+          ]}
+          skew={false}
+        />
+
+        {/* [03] Current Build — PRAVAH (Dark #111111) */}
         <CurrentBuild />
 
-        {/* 04: What I'm Learning — DSA with C++ (Light #F4F2EC) */}
+        {/* [04] Technical Notebook — DSA with C++ (Light #F4F2EC) */}
         <Learning />
 
-        {/* 05: Long-Term Project — Wildlife Camera Trap Detection (Dark #111111) */}
-        <LongTermProject />
-
-        {/* 06: Focus & How I Build (Light #F4F2EC -> Dark #111111) */}
+        {/* How I Build (Dark #111111) — The Method */}
         <FocusAndProcess />
 
-        {/* 07: About, Skills, Metrics & Building Journey (Light -> Dark) */}
-        <SkillsAndJourney />
+        {/* [05] About & Long-Term Project (Light #F4F2EC) — The Story */}
+        <About />
 
-        {/* 08: FAQ Clarifications (Light #F4F2EC) */}
-        <Faq />
+        {/* [06] Building Journey (Dark #111111) — The Trajectory */}
+        <Journey />
 
-        {/* 09: Final Dramatic Call to Action (Dark #111111 with #FF4500) */}
+        {/* Final CTA (Dark #111111) — Direct Dispatch */}
         <FinalCTA />
       </main>
 
-      {/* 10: Editorial Magazine Footer (Black #0A0A0A) */}
+      {/* Editorial Footer (Black #0A0A0A) */}
       <Footer />
     </div>
   );

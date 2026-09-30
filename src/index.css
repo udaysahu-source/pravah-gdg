@@ -116,18 +116,6 @@
   animation: radar-pulse 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
-/* Hide default cursor on desktop when custom cursor is active */
-@media (min-width: 1024px) {
-  .custom-cursor-active {
-    cursor: none;
-  }
-  .custom-cursor-active a,
-  .custom-cursor-active button,
-  .custom-cursor-active [role="button"] {
-    cursor: none;
-  }
-}
-
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
@@ -141,3 +129,4 @@
     transform: none;
   }
 }
+

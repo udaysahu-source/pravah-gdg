@@ -2,11 +2,12 @@ export interface Project {
   id: string;
   number: string;
   title: string;
+  status: 'LIVE' | 'LIVE PROTOTYPE';
+  category: string;
   oneLiner: string;
   description: string;
   tags: string[];
   year: string;
-  status: string;
   domain: string;
   liveUrl: string;
   githubUrl?: string;
@@ -36,9 +37,8 @@ export interface FocusArea {
 export interface ProcessStep {
   number: string;
   title: string;
+  tagline: string;
   description: string;
-  details: string;
-  quote: string;
 }
 
 export interface SkillCategory {
@@ -47,20 +47,22 @@ export interface SkillCategory {
   skills: { name: string; levelNote?: string }[];
 }
 
-export interface FaqItem {
-  question: string;
-  answer: string;
+export interface JourneyMilestone {
+  period: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  tag: string;
 }
 
 export const PORTFOLIO_DATA = {
   personal: {
     name: "UDAY SAHU",
-    role: "CSE Student · Developer · Builder · Problem Solver",
-    location: "Raipur, Chhattisgarh, India",
+    role: "CSE STUDENT · DEVELOPER · BUILDER · PROBLEM SOLVER",
+    location: "RAIPUR, INDIA",
     coordinates: "21.2514° N, 81.6296° E",
     primaryTagline: "I BUILD THINGS THAT SHOULD EXIST.",
-    supportingTagline: "I build practical software products and turn real-world problems into working technology.",
-    subText: "Building software, exploring ideas, and turning problems into prototypes.",
+    supportingTagline: "I build practical software products, experiment with emerging technology, and turn real-world problems into working prototypes.",
     college: "SSIPMT Raipur",
     email: "udaysahu.in@gmail.com",
     github: "https://github.com/udaysahu-source",
@@ -68,30 +70,30 @@ export const PORTFOLIO_DATA = {
     linkedin: "https://linkedin.com/in/udaysahu29",
     linkedinUser: "udaysahu29",
     year: "2026",
-    systemStatus: "BUILDING / ONLINE",
+    buildNumber: "BUILD 001",
   },
 
   heroStatus: [
     {
       id: "building",
+      symbol: "■",
       label: "BUILDING",
-      value: "PRAVAH",
+      target: "PRAVAH",
       detail: "Flood-aware route intelligence & accessibility platform",
-      active: true,
     },
     {
       id: "learning",
+      symbol: "□",
       label: "LEARNING",
-      value: "DSA WITH C++",
-      detail: "Algorithmic patterns, memory models, time-complexity bounds",
-      active: false,
+      target: "DSA WITH C++",
+      detail: "Core algorithmic patterns, time-space bounds, and consistent practice",
     },
     {
       id: "contributing",
+      symbol: "□",
       label: "CONTRIBUTING",
-      value: "OPEN SOURCE / GSOC",
-      detail: "Exploring real-world distributed codebases & tooling",
-      active: false,
+      target: "OPEN SOURCE / GSOC",
+      detail: "Exploring real-world distributed codebases & open-source preparation",
     },
   ],
 
@@ -100,11 +102,12 @@ export const PORTFOLIO_DATA = {
       id: "bunkd",
       number: "01",
       title: "BUNKD",
-      oneLiner: "Attendance management / bunk calculator PWA.",
-      description: "A progressive web app built for college students to track attendance intelligently, simulate forward margins, and calculate exactly how many lectures can be safely skipped while staying strictly above curriculum target thresholds.",
-      tags: ["PWA", "Next.js", "React", "Attendance Engine", "Offline-Ready"],
+      status: "LIVE",
+      category: "Attendance Management PWA",
+      oneLiner: "Attendance management and bunk calculator PWA for college students.",
+      description: "A progressive web app built for students to track attendance intelligently, calculate forward lecture margins, and simulate exactly how many lectures can be safely skipped while staying strictly above mandatory criteria thresholds.",
+      tags: ["PWA", "Next.js", "React", "TypeScript", "Tailwind CSS"],
       year: "2026",
-      status: "LIVE DEPLOYED",
       domain: "bunk-d.vercel.app",
       liveUrl: "https://bunk-d.vercel.app/",
       image: "/assets/bunkd_real.png",
@@ -114,11 +117,12 @@ export const PORTFOLIO_DATA = {
       id: "sanket",
       number: "02",
       title: "SANKET",
-      oneLiner: "Smart civic hazard reporting platform.",
-      description: "A civic incident reporting and verification platform connecting local citizens with municipality action pipelines. Geotagged reporting for potholes, dangerous bridges, open electrical hazards, and waterlogging.",
-      tags: ["Civic Tech", "React", "Geotagging", "Municipal Pipeline", "PWA"],
+      status: "LIVE PROTOTYPE",
+      category: "Smart Civic Hazard Reporting Platform",
+      oneLiner: "Smart civic incident reporting and geotagged verification platform.",
+      description: "A civic hazard platform connecting citizens with municipality action pipelines. Features geotagged reporting for potholes, dangerous road crossings, open electrical hazards, and severe waterlogging.",
+      tags: ["Civic Tech", "React", "Geotagging", "Municipal Pipeline", "Tailwind CSS"],
       year: "2026",
-      status: "LIVE DEPLOYED",
       domain: "team-leaf-prototype.vercel.app",
       liveUrl: "https://team-leaf-prototype.vercel.app/feed",
       githubUrl: "https://github.com/udaysahu-source/Sanket",
@@ -128,11 +132,12 @@ export const PORTFOLIO_DATA = {
       id: "labelsure",
       number: "03",
       title: "LABELSURE",
-      oneLiner: "Legal Metrology compliance screening platform.",
-      description: "An automated compliance flagging platform for Indian packaged goods under the Legal Metrology (Packaged Commodities) Rules, 2011. Detects labeling non-compliance across retail packaging for inspectors and manufacturers.",
+      status: "LIVE PROTOTYPE",
+      category: "Legal Metrology Compliance Platform",
+      oneLiner: "Legal Metrology compliance screening platform for retail packaged goods.",
+      description: "An automated compliance screening tool evaluating packaged commodity labels against mandatory declarations under the Indian Legal Metrology (Packaged Commodities) Rules, 2011.",
       tags: ["Legal Metrology", "Compliance OCR", "Python", "Regulatory Rules", "React"],
       year: "2026",
-      status: "LIVE DEPLOYED",
       domain: "labelcheck-rho.vercel.app",
       liveUrl: "https://labelcheck-rho.vercel.app/",
       githubUrl: "https://github.com/udaysahu-source/LABELSURE",
@@ -143,11 +148,12 @@ export const PORTFOLIO_DATA = {
       id: "bro-or-fraud",
       number: "04",
       title: "BRO OR FRAUD",
-      oneLiner: "A social trust / fraud-oriented interactive web experience.",
-      description: "An interactive pass-the-phone multiplayer experience challenging players to detect deception and call out frauds among friends. Features themed packs across College Life, Relationships, and Gen Z pop culture.",
+      status: "LIVE",
+      category: "Interactive Social Deception Game",
+      oneLiner: "Pass-the-phone multiplayer deception and trust party game.",
+      description: "An interactive social web experience challenging groups of friends to spot the fraud through rapid questioning and deception detection across themed packs like College Life and Friend Group Lore.",
       tags: ["Social Web App", "Interactive UI", "React", "State Engine", "Multiplayer"],
       year: "2026",
-      status: "LIVE DEPLOYED",
       domain: "bro-or-fraud.vercel.app",
       liveUrl: "https://bro-or-fraud.vercel.app/",
       image: "/assets/bro_or_fraud_real.png",
@@ -155,41 +161,31 @@ export const PORTFOLIO_DATA = {
   ] as Project[],
 
   pravah: {
-    number: "01",
-    label: "CURRENTLY BUILDING",
+    number: "03",
+    label: "CURRENT BUILD",
     title: "PRAVAH",
-    subheading: "Flood-aware route and accessibility intelligence.",
-    tagline: "Transforming raw geographic topography and flood extent data into lifelines for emergency navigation.",
-    description: "PRAVAH explores how flood extent and geographic data can be transformed into useful route and accessibility information during severe monsoon inundations. Instead of relying on static road maps that send vehicles into submerged underpasses, PRAVAH recalculates safe traversable corridors dynamically.",
-    status: "// ACTIVE SPRINT — BUILD 001",
-    coordinates: "Raipur Metropolitan Area (21.2514° N, 81.6296° E)",
-    elevationProfile: "260m - 320m above MSL",
-    coreFeatures: [
-      {
-        title: "Dynamic Flood Boundary Rasterization",
-        desc: "Ingesting regional topological contour lines and water basin sensor levels to compute real-time submerged roadway perimeters.",
-      },
-      {
-        title: "Safe Corridor Graph Recalculation",
-        desc: "Dijkstra/A* graph weights altered based on flood depth thresholds; isolating submerged bridges and rerouting to elevated arterials.",
-      },
-      {
-        title: "Emergency Evacuation & Hospital Nodes",
-        desc: "Continuous reachability indexing for critical trauma centers and isolated residential pockets across Raipur.",
-      },
-      {
-        title: "Low-Bandwidth Offline Mesh Support",
-        desc: "Packaging delta hazard vectors into tiny byte payloads that transmit over constrained 2G/SMS channels when towers fail.",
-      },
+    subtitle: "Flood-aware route intelligence and accessibility platform.",
+    status: "BUILD STATUS: ACTIVE · PROTOTYPE / MVP",
+    tagline: "Recalculating safe urban corridors during monsoon inundations.",
+    problem: "During severe monsoon rain in Raipur, standard navigation systems assume road networks are uniformly accessible. They route vehicles into submerged underpasses and low-lying river basin bottlenecks, creating emergency hazards.",
+    idea: "PRAVAH integrates topographical elevation contours and flood inundation perimeters into dynamic graph-routing weights. Inundated segments are severed or cost-penalized, while higher-elevation arterials are prioritized.",
+    routeIntelligence: "Instead of selecting purely the shortest distance path, PRAVAH applies depth-weighted Dijkstra / A* cost functions to guarantee traversable evacuation corridors to trauma centers like AIIMS Raipur.",
+    architecture: [
+      { step: "01", name: "GEOSPATIAL ELEVATION", desc: "Digital elevation model & contour line rasterization for Raipur basin." },
+      { step: "02", name: "DYNAMIC GRAPH ENGINE", desc: "A* graph weighting dynamically modified by localized inundation thresholds." },
+      { step: "03", name: "OFFLINE MESH RESILIENCE", desc: "Lightweight hazard delta payloads designed to function when cell towers suffer outages." },
+      { step: "04", name: "CRITICAL NODE INDEXING", desc: "Persistent accessibility scoring for primary hospitals and relief depots." },
     ],
     technicalStack: ["React", "TypeScript", "Geospatial GIS", "Topology Contours", "A* Graph Routing", "Node.js"],
-    image: "/assets/pravah_preview.jpg",
+    currentStatusNote: "Active prototype focusing on corridor recalculation and simulation across the Raipur metropolitan sector.",
+    nextSteps: "Validating against historical inundation logs, testing low-bandwidth offline vectors, and refining civic hazard alert hooks.",
   },
 
   learning: {
+    label: "TECHNICAL NOTEBOOK",
     title: "WHAT I'M LEARNING",
     primary: "DSA WITH C++",
-    subheading: "An evolving engineering notebook tracking computational principles, memory mechanics, and problem solving.",
+    supportingText: "Building stronger problem-solving fundamentals through DSA, competitive programming, and consistent practice.",
     topics: [
       {
         id: "arrays",
@@ -291,224 +287,115 @@ void solveOptimal(const vector<T>& stream) {
         keyTakeaway: "Clear mathematical invariants make edge cases disappear naturally.",
       },
     ] as LearningTopic[],
-  },
 
-  wildlife: {
-    label: "LONG-TERM BUILD / SEMESTER PROJECT",
-    title: "WILDLIFE ANIMAL DETECTION USING CAMERA TRAP IMAGES",
-    subheading: "Automated fauna identification & nocturnal telemetry across Central Indian reserves.",
-    narrative: "A semester project exploring wildlife animal detection using camera-trap imagery, intended to continue and evolve throughout the B.Tech program. Rather than claiming impossible breakthrough benchmarks, this project focuses on real-world edge challenges: nighttime infrared blur, animal camouflage, false positives triggered by moving leaves, and battery-efficient processing on low-power sensor stations.",
-    contextTag: "Barnawapara Wildlife Sanctuary / Chhattisgarh Ecology",
-    pipelineSteps: [
+    profiles: [
       {
-        phase: "01 SENSOR CAPTURE",
-        detail: "Passive Infrared (PIR) heat motion trigger initiates 3-shot nocturnal burst sequence under 850nm IR illumination.",
+        platform: "LEETCODE",
+        username: "@udaysahu_",
+        url: "https://leetcode.com/u/udaysahu_/",
+        description: "Algorithmic problem solving, array invariants, and data structure mechanics.",
       },
       {
-        phase: "02 PREPROCESSING",
-        detail: "Dynamic histogram equalization and high-pass edge filtering to normalize deep shadows and vegetation occlusion.",
+        platform: "CODEFORCES",
+        username: "@udaysahu",
+        url: "https://codeforces.com/profile/udaysahu",
+        description: "Competitive programming practice, time complexity bounds, and contest simulations in C++20.",
       },
       {
-        phase: "03 BOUNDING BOX & DETECT",
-        detail: "Lightweight computer vision model detects quadrupeds, bounding coordinates, and key skeletal anchor nodes.",
-      },
-      {
-        phase: "04 SPECIES CLASSIFICATION",
-        detail: "Confidence scoring across regional mammals (Leopard, Spotted Deer, Nilgai, Wild Boar) with unverified review queues.",
+        platform: "GEEKSFORGEEKS",
+        username: "@udaysahuuu",
+        url: "https://www.geeksforgeeks.org/profile/udaysahuuu",
+        description: "Core DSA fundamentals, Standard Template Library (STL), and implementation drills.",
       },
     ],
-    technicalHighlights: [
-      { key: "Target Model", value: "Lightweight YOLO / CNN" },
-      { key: "Environment", value: "Nocturnal Infrared (IR)" },
-      { key: "Focus Species", value: "Central Indian Fauna" },
-      { key: "Project Nature", value: "Ongoing B.Tech Project" },
-    ],
-    image: "/assets/wildlife_preview.jpg",
   },
-
-  focusAreas: [
-    {
-      number: "01",
-      title: "HACKATHONS",
-      description: "Turning raw ideas into fully working prototypes in 24–48 hours.",
-      tag: "SPEED & SHIP",
-      details: "Rapid architecture scoping, offline resilience, and building products that actually solve tangible ground-level problems under pressure.",
-    },
-    {
-      number: "02",
-      title: "OPEN SOURCE",
-      description: "Learning to read, debug, and contribute to real-world codebases.",
-      tag: "COMMUNITY & CODE",
-      details: "Understanding large-scale software structure, version control discipline, issue triage, and adhering to strict upstream standards.",
-    },
-    {
-      number: "03",
-      title: "GSOC",
-      description: "Preparing for meaningful open-source contributions and Google Summer of Code.",
-      tag: "GLOBAL IMPACT",
-      details: "Studying mentor organization repositories, understanding contribution workflows, and building deep domain competency.",
-    },
-    {
-      number: "04",
-      title: "BUILDING",
-      description: "Continuing to develop practical software projects that solve real problems.",
-      tag: "PRODUCT DISCIPLINE",
-      details: "Moving beyond toy tutorials to build software with persistent state, edge-case resilience, and authentic utility.",
-    },
-  ] as FocusArea[],
 
   process: [
     {
       number: "01",
       title: "OBSERVE",
-      description: "Understand the problem.",
-      details: "I look at friction points in daily life, college administration, transit gates, or civic issues. No software should be written until the actual root bottleneck is clear.",
-      quote: "Software without a clear problem is just digital clutter.",
+      tagline: "Understand the actual problem before touching the code.",
+      description: "Analyze ground-level friction, identify the actual bottleneck, and determine whether software is the right solution before writing a single line.",
     },
     {
       number: "02",
       title: "EXPLORE",
-      description: "Research possible approaches.",
-      details: "Compare architectural tradeoffs: Can this run offline? Does it need a server or can local storage suffice? What are the edge failures?",
-      quote: "The cheapest bug to fix is the one prevented in the architecture sketch.",
+      tagline: "Research constraints, users, existing solutions and technical possibilities.",
+      description: "Examine architectural tradeoffs, assess offline feasibility, study edge-case failures, and understand real user constraints.",
     },
     {
       number: "03",
       title: "BUILD",
-      description: "Turn the idea into a working prototype.",
-      details: "Writing clean, functional code with TypeScript, React, C++, or Python. Prioritizing core mechanics over decorative distractions.",
-      quote: "A working prototype answers questions that ten meetings cannot.",
+      tagline: "Turn the idea into a working prototype.",
+      description: "Translate specifications into robust, functional code using TypeScript, C++, Python, or React—focusing on core mechanics first.",
     },
     {
       number: "04",
       title: "ITERATE",
-      description: "Test, improve and repeat.",
-      details: "Testing on weak mobile networks, measuring bundle sizes, refining ergonomics, and hardening failure modes based on actual testing.",
-      quote: "Great software is not built once; it is refined through relentless iteration.",
+      tagline: "Test, break, improve and repeat.",
+      description: "Subject prototypes to weak networks, measure load footprints, refine ergonomics, and harden against real-world failure modes.",
     },
   ] as ProcessStep[],
 
-  skills: [
-    {
-      category: "LANGUAGES",
-      tag: "CORE LOGIC",
-      skills: [
-        { name: "C", levelNote: "Memory & pointers" },
-        { name: "C++", levelNote: "DSA & STL" },
-        { name: "Python", levelNote: "Scripting & AI" },
-        { name: "JavaScript", levelNote: "ESNext" },
-        { name: "TypeScript", levelNote: "Type-safe apps" },
-      ],
+  about: {
+    label: "[05] ABOUT",
+    heading: "WHO IS UDAY?",
+    lead: "CSE student. Developer. Builder. Based in Raipur, India.",
+    bio: [
+      "I am an engineering student and builder focused on practical software products, hackathon prototypes, and open-source systems.",
+      "My approach is grounded in real-world utility: understanding the actual problem, designing systems that handle edge cases cleanly, and shipping code that works reliably.",
+    ],
+    currentDirection: [
+      "Building practical software",
+      "Hackathons",
+      "DSA with C++",
+      "Open source",
+      "GSoC preparation",
+      "Exploring AI/software systems",
+    ],
+    longTermProject: {
+      title: "Wildlife Animal Detection Using Camera Trap Images",
+      type: "Academic Semester Research / B.Tech Track",
+      description: "A multi-semester research initiative exploring computer vision models on nocturnal infrared camera-trap feeds. Focuses on real-world challenges: night-time motion blur, heavy vegetation camouflage, false positives from wind, and power-efficient edge inferencing.",
+      image: "/assets/wildlife_preview.jpg",
     },
-    {
-      category: "FRONTEND",
-      tag: "UI & INTERACTION",
-      skills: [
-        { name: "React", levelNote: "State & Hooks" },
-        { name: "Next.js", levelNote: "App router & SSR" },
-        { name: "HTML5", levelNote: "Semantic markup" },
-        { name: "CSS3", levelNote: "Modern layouts" },
-        { name: "Tailwind CSS", levelNote: "Utility styling" },
-      ],
-    },
-    {
-      category: "BACKEND & DATA",
-      tag: "STORAGE & APIS",
-      skills: [
-        { name: "Node.js", levelNote: "Server runtimes" },
-        { name: "Supabase", levelNote: "Auth & DB" },
-        { name: "PostgreSQL", levelNote: "Relational data" },
-        { name: "SQLite", levelNote: "Offline persistence" },
-      ],
-    },
-    {
-      category: "TOOLS",
-      tag: "WORKFLOW",
-      skills: [
-        { name: "Git", levelNote: "Branching & history" },
-        { name: "GitHub", levelNote: "CI & collaborations" },
-        { name: "VS Code", levelNote: "Primary IDE" },
-        { name: "Linux / Bash", levelNote: "Shell scripting" },
-      ],
-    },
-    {
-      category: "AI & DOMAIN",
-      tag: "SYSTEMS",
-      skills: [
-        { name: "AI APIs", levelNote: "LLM integration" },
-        { name: "Computer Vision", levelNote: "Object detection" },
-        { name: "Geospatial Data", levelNote: "Topography & GIS" },
-      ],
-    },
-  ] as SkillCategory[],
-
-  metrics: [
-    {
-      number: "04",
-      label: "DEPLOYED PROJECTS",
-      sub: "Real live web applications",
-    },
-    {
-      number: "01",
-      label: "CURRENT BUILD",
-      sub: "PRAVAH Flood Intelligence",
-    },
-    {
-      number: "01",
-      label: "LONG-TERM PROJECT",
-      sub: "Wildlife Camera Trap Detection",
-    },
-    {
-      number: "2026",
-      label: "BUILDING / LEARNING",
-      sub: "SSIPMT Raipur · CSE",
-    },
-  ],
+  },
 
   journey: [
     {
-      year: "2026",
-      tag: "ACADEMICS",
-      title: "B.Tech Computer Science & Engineering",
-      institution: "SSIPMT Raipur, Chhattisgarh",
-      description: "Focusing on data structures, computer networks, system design, and computer vision while building practical software products.",
+      period: "2026",
+      tag: "HACKATHONS",
+      title: "Rapid Prototyping & Real-World Problem Solving",
+      subtitle: "Hackathons & Prototype Sprints",
+      description: "Turning raw problem statements into fully functional prototypes within 24–48 hours, prioritizing offline resilience and core utility under pressure.",
     },
     {
-      year: "2026",
-      tag: "SHIPPED",
-      title: "Deployed Web Applications",
-      institution: "Bunkd · Sanket · LabelSure · Bro or Fraud",
-      description: "Building and maintaining real deployed products serving college attendance tracking, civic hazard pipelines, legal metrology rules, and interactive multiplayer experiences.",
+      period: "2026",
+      tag: "CURRENT BUILD",
+      title: "PRAVAH — Flood-Aware Route Intelligence",
+      subtitle: "Active Prototype / MVP",
+      description: "Developing dynamic graph-routing models that recalculate safe transit corridors based on urban inundation boundaries and elevation contours in Raipur.",
     },
     {
-      year: "2026",
-      tag: "CONTRIBUTING",
-      title: "Open Source & GSoC Preparation",
-      institution: "Community Development",
-      description: "Diving into open-source repositories, understanding production review processes, and preparing for meaningful global contributions.",
-    },
-  ],
-
-  faqs: [
-    {
-      question: "WHAT DO YOU BUILD?",
-      answer: "Real, practical software products and deployed web applications—including Bunkd (attendance PWA), Sanket (civic hazards), LabelSure (legal metrology compliance), and Bro or Fraud (interactive social experience).",
+      period: "2026",
+      tag: "OPEN SOURCE",
+      title: "Exploring Contribution & GSoC Preparation",
+      subtitle: "Open Source Communities",
+      description: "Reading large-scale distributed codebases, understanding production code review standards, and preparing for Google Summer of Code contributions.",
     },
     {
-      question: "WHAT ARE YOU CURRENTLY WORKING ON?",
-      answer: "PRAVAH—a flood-aware route and accessibility intelligence system exploring how flood boundaries and elevation contours can be recalculated dynamically for safe navigation.",
+      period: "2026",
+      tag: "DSA PRACTICE",
+      title: "DSA with C++ Fundamentals",
+      subtitle: "C++20 Problem Solving",
+      description: "Systematic practice on arrays, two-pointers, hashing, prefix sums, binary search, and asymptotic time/space guarantees.",
     },
     {
-      question: "WHAT ARE YOU LEARNING?",
-      answer: "DSA with C++: systematically strengthening algorithmic reasoning from arrays, two-pointers, hashing, prefix sums, binary search, and subarrays to asymptotic problem solving.",
+      period: "LONG TERM",
+      tag: "COMPUTER VISION",
+      title: "Wildlife Camera-Trap Animal Detection",
+      subtitle: "Ongoing Academic Semester Project",
+      description: "Explaining and evaluating computer vision models on nocturnal infrared camera feeds from Central Indian wildlife reserves.",
     },
-    {
-      question: "WHAT ARE YOU FOCUSED ON?",
-      answer: "Participating in hackathons, learning to contribute to production open-source codebases, preparing for GSoC, and continuously developing practical software projects.",
-    },
-    {
-      question: "WHAT IS YOUR LONG-TERM PROJECT?",
-      answer: "Wildlife Animal Detection Using Camera Trap Images: a semester project exploring computer vision models on nocturnal infrared camera-trap feeds, intended to evolve across my B.Tech degree.",
-    },
-  ] as FaqItem[],
+  ] as JourneyMilestone[],
 };

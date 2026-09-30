@@ -14,68 +14,81 @@ export const Projects: React.FC = () => {
   const labelsure = projects[2];
   const broOrFraud = projects[3];
 
-  const renderProjectCard = (project: Project, isLarge: boolean) => {
+  const renderProjectCard = (project: Project) => {
+    const isLive = project.status === 'LIVE';
+
     return (
       <div
         onClick={() => setSelectedProject(project)}
-        className="group relative bg-[#111111] text-[#F4F2EC] border border-[#2b2b2b] p-5 sm:p-7 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-[#FF4500]/60 shadow-xl flex flex-col justify-between"
-        data-cursor="VIEW PROJECT"
+        className="group relative bg-[#111111] text-[#F4F2EC] border border-[#2b2b2b] p-5 sm:p-7 cursor-pointer transition-all duration-300 hover:border-[#FF4500]/70 hover:-translate-y-1 shadow-xl flex flex-col justify-between"
       >
         <div>
-          {/* Card Top Meta Bar */}
+          {/* Card Top: Number, Title, Status */}
           <div className="flex items-center justify-between pb-3.5 border-b border-[#262626] font-mono text-xs">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <span className="text-[#FF4500] font-bold">[{project.number}]</span>
-              <span className="text-white font-heading font-black tracking-wider text-base uppercase">
+              <h3 className="text-white font-heading font-black tracking-wider text-lg uppercase">
                 {project.title}
-              </span>
+              </h3>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] text-[#22c55e] font-mono hidden sm:inline-flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e]" />
-                LIVE
+
+            <div className="flex items-center gap-2">
+              <span
+                className={`text-[10px] font-mono px-2 py-0.5 border ${
+                  isLive
+                    ? 'bg-[#22c55e]/10 text-[#22c55e] border-[#22c55e]/30'
+                    : 'bg-[#eab308]/10 text-[#eab308] border-[#eab308]/30'
+                }`}
+              >
+                ● {project.status}
               </span>
-              <ArrowUpRight className="w-4 h-4 text-[#A7A39A] group-hover:text-[#FF4500] group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
+              <ArrowUpRight className="w-4 h-4 text-[#A7A39A] group-hover:text-[#FF4500] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
             </div>
           </div>
 
-          {/* One-Liner Description */}
-          <div className="py-3">
-            <p className="text-xs sm:text-sm text-[#A7A39A] leading-relaxed">
+          {/* Category & One-Liner */}
+          <div className="pt-3 pb-2 space-y-1">
+            <div className="font-mono text-[11px] text-[#FF4500] uppercase tracking-wider font-semibold">
+              {project.category}
+            </div>
+            <p className="font-sans text-xs sm:text-sm text-[#A7A39A] leading-relaxed">
               {project.oneLiner}
             </p>
           </div>
 
-          {/* Browser-Window Frame Presentation (Authentic Real UI Inside) */}
+          {/* Stylized Editorial Browser Frame with Real Screenshot */}
           <div className="border border-[#2a2a2a] bg-[#0c0c0c] overflow-hidden my-3 shadow-md">
-            {/* Browser Window Header */}
+            {/* Browser Header Bar */}
             <div className="flex items-center justify-between px-3 py-2 bg-[#181818] border-b border-[#242424]">
               <div className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
                 <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
                 <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
               </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-0.5 bg-[#0f0f0f] border border-[#2b2b2b] text-[10px] font-mono text-[#A7A39A] max-w-[200px] sm:max-w-xs truncate">
-                <Globe className="w-2.5 h-2.5 text-[#22c55e]" />
+              <div className="flex items-center gap-1.5 px-2.5 py-0.5 bg-[#0f0f0f] border border-[#2b2b2b] text-[10px] font-mono text-[#A7A39A] max-w-[220px] sm:max-w-xs truncate">
+                <Globe className="w-3 h-3 text-[#22c55e] shrink-0" />
                 <span className="truncate">{project.domain}</span>
               </div>
-              <span className="text-[9px] font-mono text-[#A7A39A] hidden sm:inline">2026</span>
+              <span className="text-[9px] font-mono text-[#A7A39A] hidden sm:inline">{project.year}</span>
             </div>
 
-            {/* Actual Screenshot with Scale on Hover */}
-            <div className={`relative ${isLarge ? 'aspect-[16/10]' : 'aspect-[16/10]'} w-full overflow-hidden bg-black`}>
+            {/* Real Screenshot */}
+            <div className="relative aspect-[16/10] w-full overflow-hidden bg-black">
               <img
                 src={project.image}
-                alt={`Authentic screenshot of ${project.title}`}
-                className="w-full h-full object-contain bg-black transition-transform duration-500 ease-out group-hover:scale-105"
+                alt={`Real deployed interface of ${project.title}`}
+                className="w-full h-full object-contain bg-black transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                 loading="lazy"
+                width={1280}
+                height={800}
               />
             </div>
           </div>
         </div>
 
-        {/* Bottom Actions & Tags */}
+        {/* Card Footer: Tech Stack, Action Links */}
         <div className="pt-3 border-t border-[#262626] space-y-3">
+          {/* Tech Stack Tags */}
           <div className="flex flex-wrap gap-1.5">
             {project.tags.map((tag) => (
               <span
@@ -87,6 +100,7 @@ export const Projects: React.FC = () => {
             ))}
           </div>
 
+          {/* Action CTAs */}
           <div className="flex flex-wrap items-center justify-between gap-2 pt-1 font-mono text-xs">
             <div className="flex items-center gap-2">
               <a
@@ -94,11 +108,9 @@ export const Projects: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FF4500] hover:bg-[#e03d00] text-white text-[11px] font-bold tracking-wider uppercase transition-colors"
-                data-cursor="OPEN ↗"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FF4500] hover:bg-[#e03d00] text-white text-[11px] font-bold tracking-wider uppercase transition-colors focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
               >
-                <span>LIVE PROJECT</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
+                <span>LIVE ↗</span>
               </a>
 
               {project.githubUrl && (
@@ -107,17 +119,17 @@ export const Projects: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-[#1e1e1e] hover:bg-[#2c2c2c] text-[#F4F2EC] border border-[#333333] text-[11px] font-semibold tracking-wider uppercase transition-colors"
-                  data-cursor="CODE"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-[#1e1e1e] hover:bg-[#2c2c2c] text-[#F4F2EC] border border-[#333333] text-[11px] font-semibold tracking-wider uppercase transition-colors focus-visible:ring-2 focus-visible:ring-[#FF4500] focus-visible:outline-none"
                 >
                   <GithubIcon className="w-3 h-3" />
-                  <span>VIEW CODE</span>
-                  <ArrowUpRight className="w-3 h-3" />
+                  <span>GITHUB ↗</span>
                 </a>
               )}
             </div>
 
-            <span className="text-[10px] text-[#A7A39A]">CLICK TO INSPECT</span>
+            <span className="text-[10px] text-[#A7A39A] group-hover:text-white transition-colors">
+              INSPECT ↗
+            </span>
           </div>
         </div>
       </div>
@@ -135,44 +147,43 @@ export const Projects: React.FC = () => {
           <div className="space-y-3">
             <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[#FF4500]">
               <span className="w-2 h-2 bg-[#FF4500]" />
-              <span>[02] REAL DEPLOYED SYSTEMS</span>
+              <span>[02] WORK</span>
             </div>
             <h2 className="font-display font-black text-5xl sm:text-6xl lg:text-7xl text-[#111111] uppercase tracking-tight">
-              LIVE PROJECTS.
+              SELECTED PROJECTS.
             </h2>
           </div>
-          <div className="max-w-md font-sans text-sm sm:text-base text-[#111111]/70 leading-relaxed">
-            Authentic, production-deployed web applications. Every screenshot is captured directly from the live URLs—zero AI mockups, zero fictional UI.
+          <div className="max-w-md font-sans text-sm sm:text-base text-[#111111]/75 leading-relaxed">
+            Real deployed applications and working prototypes. Interfaces captured directly from live environments — no fabricated mockups or placeholder designs.
           </div>
         </div>
 
-        {/* Staggered Editorial Grid: Row 1 (BUNKD 7-col + SANKET 5-col) */}
+        {/* 2-Row Asymmetric Editorial Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 pt-12 items-start">
           <div className="lg:col-span-7">
-            {renderProjectCard(bunkd, true)}
+            {renderProjectCard(bunkd)}
           </div>
-          <div className="lg:col-span-5 lg:pt-10">
-            {renderProjectCard(sanket, false)}
+          <div className="lg:col-span-5 lg:pt-8">
+            {renderProjectCard(sanket)}
           </div>
         </div>
 
-        {/* Staggered Editorial Grid: Row 2 (LABELSURE 7-col + BRO OR FRAUD 5-col) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 pt-10 items-start">
           <div className="lg:col-span-7">
-            {renderProjectCard(labelsure, true)}
+            {renderProjectCard(labelsure)}
           </div>
-          <div className="lg:col-span-5 lg:pt-10">
-            {renderProjectCard(broOrFraud, false)}
+          <div className="lg:col-span-5 lg:pt-8">
+            {renderProjectCard(broOrFraud)}
           </div>
         </div>
 
-        {/* Real Authenticity Stamp */}
-        <div className="mt-12 p-4 bg-white/70 border border-[#111111]/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono text-xs text-[#111111]/80">
+        {/* Quiet Integrity Footnote */}
+        <div className="mt-12 p-3.5 bg-white/70 border border-[#111111]/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono text-xs text-[#111111]/80">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 bg-[#22c55e] rounded-full" />
-            <span>AUTHENTICITY GUARANTEE: 100% REAL DEPLOYED APPLICATIONS CAPTURED HEADLESS.</span>
+            <span>VERIFIED: 4 REAL DEPLOYED URLS · 0 FICTIONAL PROJECTS</span>
           </div>
-          <span className="text-[11px] text-[#A7A39A]">VERIFIED LIVE IN 2026</span>
+          <span className="text-[11px] text-[#A7A39A]">STATUS AUDITED · 2026</span>
         </div>
       </div>
 

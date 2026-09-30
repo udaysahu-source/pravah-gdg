@@ -10,6 +10,12 @@ interface ProjectModalProps {
 
 export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
   const [activeTab, setActiveTab] = useState<'primary' | 'secondary'>('primary');
+  const [prevProjectId, setPrevProjectId] = useState<string | null>(null);
+
+  if (project && project.id !== prevProjectId) {
+    setPrevProjectId(project.id);
+    setActiveTab('primary');
+  }
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -18,7 +24,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
     if (project) {
       document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
-      setActiveTab('primary');
     }
     return () => {
       document.body.style.overflow = 'unset';

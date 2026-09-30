@@ -1,44 +1,24 @@
 {
   "lastSync": "30 SEP 2026 · 18:45 IST",
-  "status": "SYNCED",
+  "status": "SYNCHRONIZED",
   "profiles": {
     "leetcode": {
-      "handle": "udaysahu_",
+      "platform": "LEETCODE",
+      "handle": "@udaysahu_",
       "url": "https://leetcode.com/u/udaysahu_/",
-      "solvedTotal": 12,
-      "easy": 5,
-      "medium": 7,
-      "hard": 0,
-      "streak": 4,
-      "activeDays": 7,
-      "recentTopic": "Binary Search / Arrays"
+      "description": "Algorithmic problem solving, array invariants, and data structure mechanics."
     },
     "codeforces": {
-      "handle": "udaysahu",
+      "platform": "CODEFORCES",
+      "handle": "@udaysahu",
       "url": "https://codeforces.com/profile/udaysahu",
-      "solved": 5,
-      "rating": "Unrated (Practice)",
-      "targetRating": "1200-1400",
-      "language": "C++20 (GCC)",
-      "recentProblem": "Building an Aquarium (1100)",
-      "lastActive": "30 SEP 2026"
+      "description": "Competitive programming practice, time complexity bounds, and contest simulations in C++20."
     },
     "geeksforgeeks": {
-      "handle": "udaysahuuu",
+      "platform": "GEEKSFORGEEKS",
+      "handle": "@udaysahuuu",
       "url": "https://www.geeksforgeeks.org/profile/udaysahuuu",
-      "focus": "DSA Fundamentals / STL"
+      "description": "Core DSA fundamentals, Standard Template Library (STL), and implementation drills."
     }
-  },
-  "metrics": {
-    "problemsSolved": "17+",
-    "currentStreak": "4 Days",
-    "primaryLanguage": "C++20",
-    "lastActivity": "30 SEP 2026"
-  },
-  "month": "SEP 2026",
-  "heatmap": [
-    ["░", "░", "▓", "▓", "░", "▓", "░", "░", "▓", "▓"],
-    ["░", "▓", "▓", "░", "▓", "▓", "▓", "░", "░", "▓"],
-    ["▓", "▓", "░", "▓", "▓", "░", "▓", "▓", "▓", "░"]
-  ]
+  }
 }

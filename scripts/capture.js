@@ -1,5 +1,4 @@
 import { firefox } from 'playwright';
-import path from 'path';
 
 const targets = [
   {
