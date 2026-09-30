@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRAVAH // Dynamic Disaster Reachability Engine</title>
+  
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Leaflet GIS Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Custom Emergency Operations Center CSS -->
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- Top Emergency Operations Command Bar -->
+  <header class="command-header">
+    <div class="brand-section">
+      <div class="brand-icon">
+        <i class="fa-solid fa-water"></i>
+      </div>
+      <div>
+        <div class="brand-title">
+          PRAVAH <span class="accent">// REACHABILITY ENGINE</span>
+        </div>
+        <div class="brand-subtitle">
+          Raipur & Mahanadi River Basin • Chhattisgarh State EOC
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Telemetry & Status Badges -->
+    <div class="status-badges">
+      <div class="badge pulse-green" id="badge-system-status">
+        <span class="dot"></span>
+        <span id="txt-sys-status">SYS: ONLINE (24N / 40E)</span>
+      </div>
+
+      <div class="badge pulse-amber" id="badge-surge-status">
+        <span class="dot"></span>
+        <span>SURGE: <strong id="txt-active-surge">0.35m</strong></span>
+      </div>
+
+      <div class="badge pulse-red" id="badge-isolated-pop">
+        <span class="dot"></span>
+        <span id="txt-isolated-summary">CUT-OFF: 33,700</span>
+      </div>
+
+      <div class="badge gemini-badge" id="badge-gemini" onclick="openKeyModal()" title="Click to configure Gemini API Key">
+        <i class="fa-solid fa-brain" style="color: #60a5fa;"></i>
+        <span id="txt-gemini-status">Gemini 3.7 Flash</span>
+        <i class="fa-solid fa-gear" style="font-size: 0.65rem; color: #94a3b8;"></i>
+      </div>
+
+      <!-- 30-Second Hackathon Winning Pitch Teleprompter -->
+      <div class="badge pitch-badge" onclick="openPitchModal()" title="Open Live 30s Pitch Teleprompter">
+        <i class="fa-solid fa-microphone-lines" style="color: #ea4335;"></i>
+        <span>30s Pitch Script</span>
+      </div>
+
+      <div class="badge" style="color: #94a3b8;" id="clock-display">
+        <i class="fa-regular fa-clock"></i>
+        <span id="live-clock">--:--:-- IST</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Three-Column Control Room Grid -->
+  <main class="dashboard-grid">
+
+    <!-- LEFT PANEL: Simulation Controls, Route Planner, Citizen Intake -->
+    <aside class="panel left-panel">
+      
+      <!-- WIDGET A: Water Height Simulation Slider -->
+      <section class="op-card" id="widget-water-sim">
+        <div class="op-card-header">
+          <div class="op-title">
+            <i class="fa-solid fa-sliders"></i> Water Height Simulation
+          </div>
+          <span class="gauge-status" id="lbl-surge-severity">Moderate Inflow</span>
+        </div>
+
+        <div class="slider-container">
+          <div class="slider-gauge-display">
+            <div>
+              <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Active Flood Surge</span>
+              <div class="gauge-val" id="val-slider-display">
+                0.35 <small>meters</small>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.68rem; color: var(--text-muted);">Threshold: 0.6m</span>
+              <div style="font-size: 0.75rem; color: var(--color-google-blue); font-weight: 600;">Ambulance Limit</div>
+            </div>
+          </div>
+
+          <input type="range" id="slider-water-height" min="0.0" max="1.5" step="0.05" value="0.35">
+
+          <!-- Simulation Quick Presets -->
+          <div class="slider-presets">
+            <button class="btn-preset" onclick="setSurgePreset(0.0, this)">0.0m Baseline</button>
+            <button class="btn-preset active" onclick="setSurgePreset(0.35, this)">0.35m Inflow</button>
+            <button class="btn-preset" onclick="setSurgePreset(0.75, this)">0.75m Breach</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- WIDGET C: Dynamic Dijkstra Emergency Routing -->
+      <section class="op-card" id="widget-routing">
+        <div class="op-card-header">
+          <div class="op-title">
+            <i class="fa-solid fa-route"></i> Emergency Route Planner
+          </div>
+          <span style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">DIJKSTRA-QUAD</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Origin Location</label>
+          <select id="select-origin" class="select-custom">
+            <!-- Populated dynamically via JS -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Destination (Hospital / Core Hub)</label>
+          <select id="select-destination" class="select-custom">
+            <!-- Populated dynamically via JS -->
+          </select>
+        </div>
+
+        <!-- Vehicle Clearance Limit Selector -->
+        <label class="form-label">Vehicle Clearance Mode</label>
+        <div class="vehicle-selector">
+          <button type="button" class="vehicle-btn active" data-clearance="0.6" onclick="selectVehicle(0.6, this)">
+            <i class="fa-solid fa-truck-medical" style="color: #ea4335;"></i> Ambulance
+            <span class="clearance">0.6m</span>
+          </button>
+          <button type="button" class="vehicle-btn" data-clearance="0.3" onclick="selectVehicle(0.3, this)">
+            <i class="fa-solid fa-car-side" style="color: #60a5fa;"></i> Civilian Car
+            <span class="clearance">0.3m</span>
+          </button>
+          <button type="button" class="vehicle-btn" data-clearance="1.0" onclick="selectVehicle(1.0, this)">
+            <i class="fa-solid fa-truck-monster" style="color: #fbbc04;"></i> Heavy Rescue
+            <span class="clearance">1.0m</span>
+          </button>
+          <button type="button" class="vehicle-btn" data-clearance="99.0" onclick="selectVehicle(99.0, this)">
+            <i class="fa-solid fa-ship" style="color: #34a853;"></i> NDRF Boat
+            <span class="clearance">Safe</span>
+          </button>
+        </div>
+
+        <button class="btn-primary" id="btn-calc-route" onclick="triggerCalculateRoute()">
+          <i class="fa-solid fa-location-crosshairs"></i> Calculate Emergency Route
+        </button>
+
+        <!-- Route Outcome Card (Hidden until computed) -->
+        <div class="route-outcome" id="card-route-outcome" style="display: none;">
+          <div class="route-status-header">
+            <span class="status-tag" id="tag-route-status">OPTIMAL</span>
+            <span style="font-size: 0.7rem; color: var(--text-muted);" id="txt-route-legs">4 Segments</span>
+          </div>
+
+          <div class="route-metrics-grid">
+            <div class="metric-box">
+              <div class="metric-title">Distance</div>
+              <div class="metric-val" id="metric-route-dist">7.0 km</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-title">Est. Time</div>
+              <div class="metric-val" id="metric-route-time">11 min</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-title">Max Depth</div>
+              <div class="metric-val" id="metric-route-depth">0.18 m</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-title">Safety Buf</div>
+              <div class="metric-val" id="metric-route-buffer">+0.42 m</div>
+            </div>
+          </div>
+
+          <div class="route-advisory" id="txt-route-advisory">
+            Route is verified passable.
+          </div>
+        </div>
+      </section>
+
+      <!-- WIDGET B: Citizen Ground Intake (Gemini 3.7 Flash) -->
+      <section class="op-card" id="widget-citizen-intake">
+        <div class="op-card-header">
+          <div class="op-title">
+            <i class="fa-solid fa-bullhorn"></i> Citizen Ground Intake
+          </div>
+          <span style="font-size: 0.7rem; color: #60a5fa; font-weight: 600;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Gemini 3.7 Flash
+          </span>
+        </div>
+
+        <!-- 1-Click Test Scenarios -->
+        <label class="form-label">Fast Benchmark Presets</label>
+        <div class="intake-prompt-presets">
+          <div class="preset-chip" onclick="loadIntakePreset(0)">
+            <i class="fa-solid fa-water" style="color: #ea4335;"></i> Knee-deep at Mahadev Ghat Causeway (0.75m)
+          </div>
+          <div class="preset-chip" onclick="loadIntakePreset(1)">
+            <i class="fa-solid fa-car" style="color: #fbbc04;"></i> Wheel hubs submerged near Telibandha (0.35m)
+          </div>
+          <div class="preset-chip" onclick="loadIntakePreset(2)">
+            <i class="fa-solid fa-triangle-exclamation" style="color: #ea4335;"></i> Waist-deep at Chhatauna Enclave (1.1m)
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Location Landmark</label>
+          <input type="text" id="intake-location" class="input-custom" placeholder="e.g. Mahadev Ghat Approach Road" value="Mahadev Ghat Causeway, Kharun River">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Observation / Description</label>
+          <textarea id="intake-text" class="input-custom" rows="2" placeholder="Describe physical water reference points (e.g. waist-level, above tire hubs...)">Water is rushing over the bridge, well above adult knees. Two autos stalled. Ambulances cannot cross!</textarea>
+        </div>
+
+        <!-- Image Upload or Sample Image -->
+        <div class="upload-dropzone" onclick="document.getElementById('intake-file').click()">
+          <i class="fa-solid fa-cloud-arrow-up" style="color: var(--color-google-blue); font-size: 1.2rem;"></i>
+          <span style="font-size: 0.75rem; color: var(--text-secondary);">Click to attach ground flood image (Optional)</span>
+          <img id="upload-thumb" class="upload-preview-thumb" alt="Upload Preview">
+          <input type="file" id="intake-file" accept="image/*" style="display: none;" onchange="handleImageSelected(event)">
+        </div>
+
+        <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+          <button type="button" class="btn-preset" style="flex: 1;" onclick="loadGeneratedSamplePhoto()">
+            <i class="fa-solid fa-camera"></i> Load Sample Photo
+          </button>
+          <button type="button" class="btn-preset" style="flex: 1;" onclick="clearUploadedPhoto()">
+            <i class="fa-solid fa-trash"></i> Clear Photo
+          </button>
+        </div>
+
+        <button class="btn-primary" id="btn-analyze-report" onclick="triggerAnalyzeReport()">
+          <i class="fa-solid fa-microchip"></i> Analyze via Gemini 3.7 Flash
+        </button>
+
+        <!-- AI Output Result Card -->
+        <div class="ai-analysis-card" id="card-ai-analysis" style="display: none;">
+          <div class="ai-pill-row">
+            <span class="ai-pill depth" id="pill-ai-depth">0.72m Water Depth</span>
+            <span class="ai-pill passable-false" id="pill-ai-passable">Ambulance IMPASSABLE</span>
+            <span class="ai-pill confidence" id="pill-ai-conf">Conf: 0.40 (Hint)</span>
+          </div>
+
+          <div style="font-size: 0.72rem; color: var(--text-secondary); margin-bottom: 6px;" id="txt-ai-cues">
+            <strong>Cues Detected:</strong> knee-deep rushing water, stalled auto-rickshaws.
+          </div>
+
+          <div style="font-size: 0.72rem; color: #cbd5e1; line-height: 1.4;" id="txt-ai-impact">
+            Road is completely cut off for emergency ambulances. Ground clearance exceeded.
+          </div>
+
+          <div style="font-size: 0.72rem; color: #60a5fa; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08);" id="txt-ai-action">
+            <strong>Action:</strong> Divert AIIMS trauma ambulances via Ring Road Overpass.
+          </div>
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- CENTER PANEL: Interactive High-Resolution GIS Map -->
+    <section class="map-viewport">
+      <div id="leaflet-map"></div>
+
+      <!-- Floating Map Header HUD -->
+      <div class="map-hud-top">
+        <div class="map-hud-item">
+          <i class="fa-solid fa-compass" style="color: var(--color-google-blue);"></i>
+          <span>Raipur • Kharun Riparian Basin</span>
+        </div>
+        <div class="map-hud-item" style="cursor: pointer;" onclick="toggleMapClickMode()" id="btn-map-mode">
+          <i class="fa-solid fa-map-pin" style="color: #fbbc04;"></i>
+          <span id="txt-click-mode">Set Points via Map: OFF</span>
+        </div>
+        <div class="map-hud-item" style="cursor: pointer;" onclick="toggleBasemapTiles()" id="btn-toggle-tiles" title="Switch between Dark Matter and Standard OpenStreetMap">
+          <i class="fa-solid fa-layer-group" style="color: #38bdf8;"></i>
+          <span id="txt-basemap-name">Basemap: Dark Matter</span>
+        </div>
+        <div class="map-hud-item" style="cursor: pointer;" onclick="resetMapView()">
+          <i class="fa-solid fa-arrows-to-eye"></i>
+          <span>Center View</span>
+        </div>
+      </div>
+
+      <!-- Floating Map Legend -->
+      <div class="map-legend">
+        <div style="font-weight: 700; color: #cbd5e1; margin-bottom: 2px;">REACHABILITY STATUS</div>
+        <div class="legend-row">
+          <div class="legend-line" style="background-color: var(--color-safe-green);"></div>
+          <span>Clear (< 0.25m)</span>
+        </div>
+        <div class="legend-row">
+          <div class="legend-line" style="background-color: var(--color-caution-amber);"></div>
+          <span>Caution (0.25m - 0.6m)</span>
+        </div>
+        <div class="legend-row">
+          <div class="legend-line" style="background-color: var(--color-alert-red);"></div>
+          <span>Submerged / Cut-Off (> 0.6m)</span>
+        </div>
+        <div class="legend-row">
+          <div class="legend-line" style="background-color: var(--color-google-blue); height: 5px; box-shadow: 0 0 6px #4285f4;"></div>
+          <span>Active Calculated Route</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: Disconnected Zones Priority Queue & Incident Feed -->
+    <aside class="panel right-panel">
+
+      <!-- WIDGET D: Vulnerability Priority Queue Card -->
+      <section class="op-card" id="widget-priority-queue">
+        <div class="op-card-header">
+          <div class="op-title">
+            <i class="fa-solid fa-triangle-exclamation" style="color: var(--color-alert-red);"></i> Isolated Zones Queue
+          </div>
+          <span style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">
+            V = 0.4P + 0.4H + 0.2R
+          </span>
+        </div>
+
+        <div style="font-size: 0.72rem; color: var(--text-secondary); margin-bottom: 10px;">
+          Ranked isolated settlements cut off from AIIMS / Central Command:
+        </div>
+
+        <!-- Dynamic Isolated Zones Container -->
+        <div id="container-isolated-zones">
+          <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.8rem;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Calculating disconnected sub-graphs...
+          </div>
+        </div>
+      </section>
+
+      <!-- Live Incident Feed & Audit Trail -->
+      <section class="op-card" style="flex: 1; display: flex; flex-direction: column;">
+        <div class="op-card-header">
+          <div class="op-title">
+            <i class="fa-solid fa-tower-broadcast"></i> Tactical Dispatch Stream
+          </div>
+          <span class="badge" style="font-size: 0.65rem; padding: 2px 6px;">Live</span>
+        </div>
+
+        <div id="incident-feed-list" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+          <!-- Dynamically populated incident log items -->
+        </div>
+      </section>
+
+    </aside>
+
+  </main>
+
+  <!-- WIDGET E: Multilingual CAP Broadcast Modal -->
+  <div class="modal-overlay" id="modal-cap-broadcast">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-bullhorn" style="color: var(--color-alert-red);"></i>
+          <span>Multilingual CAP Alert Broadcast Dispatcher</span>
+        </div>
+        <button class="btn-close" onclick="closeCapModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h4 id="cap-target-zone-title" style="color: #ffffff; font-size: 0.95rem;">Target: Chhatauna Riverbend Enclave</h4>
+            <span style="font-size: 0.72rem; color: var(--text-secondary);" id="cap-target-meta">Affected: 14,200 Citizens • Vulnerability: 82.5</span>
+          </div>
+          <span class="badge pulse-amber" id="badge-cap-modal-status">PENDING OFFICER APPROVAL</span>
+        </div>
+
+        <!-- Tabs: CAP XML, Hindi SMS, Chhattisgarhi SMS -->
+        <div class="modal-tabs">
+          <button class="tab-btn active" onclick="switchCapTab('xml', this)">📜 OASIS CAP v1.2 XML</button>
+          <button class="tab-btn" onclick="switchCapTab('hindi', this)">🇮🇳 Hindi SMS (< 160c)</button>
+          <button class="tab-btn" onclick="switchCapTab('chhattisgarhi', this)">🌾 Chhattisgarhi SMS (< 160c)</button>
+          <button class="tab-btn" onclick="switchCapTab('channels', this)">📡 Channels (4)</button>
+        </div>
+
+        <!-- Tab 1: XML -->
+        <div class="tab-pane active" id="pane-tab-xml">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="font-size: 0.7rem; color: var(--text-muted);">Standard OASIS CAP 1.2 Schema</span>
+            <button class="btn-preset" onclick="copyCapXml()"><i class="fa-solid fa-copy"></i> Copy XML</button>
+          </div>
+          <div class="code-block" id="cap-code-xml">Loading XML schema...</div>
+        </div>
+
+        <!-- Tab 2: Hindi SMS -->
+        <div class="tab-pane" id="pane-tab-hindi">
+          <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 6px;">Devanagari Cellular Broadcast:</span>
+          <div class="sms-preview-bubble" id="cap-hindi-text">
+            आपात चेतावनी: खारून नदी उफान से संपर्क टूटा। ऊंचे पक्के स्थान पर जाएं। पुल पार न करें। बचाव नाव हेतु 112 डायल करें। -EOC रायपुर
+          </div>
+          <div class="sms-char-counter" id="cap-hindi-counter">134 / 160 Characters</div>
+        </div>
+
+        <!-- Tab 3: Chhattisgarhi SMS -->
+        <div class="tab-pane" id="pane-tab-chhattisgarhi">
+          <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 6px;">Regional Dialect Alert:</span>
+          <div class="sms-preview-bubble" id="cap-chhattisgarhi-text">
+            सतर्कता सूचना: खारून तीर म पानी बाढ़गे हे, रद्दा बंद हे! सबो झन ऊंच जगा म चल देव। पानी म झन घुसो। मदद बर 112 म फोन करा। -रायपुर ईओसी
+          </div>
+          <div class="sms-char-counter" id="cap-cg-counter">138 / 160 Characters</div>
+        </div>
+
+        <!-- Tab 4: Channels -->
+        <div class="tab-pane" id="pane-tab-channels">
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.78rem;">
+            <div style="background: #1e293b; padding: 10px; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-tower-cell" style="color: #60a5fa; font-size: 1.2rem;"></i>
+              <div>
+                <strong>Cell Broadcast (CB-4370)</strong>
+                <div style="color: var(--text-muted); font-size: 0.7rem;">Direct geo-targeted buzzer push to all mobile handsets in sector</div>
+              </div>
+            </div>
+            <div style="background: #1e293b; padding: 10px; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-comment-sms" style="color: #34a853; font-size: 1.2rem;"></i>
+              <div>
+                <strong>National SMS Gateway (C-DOT CAP Engine)</strong>
+                <div style="color: var(--text-muted); font-size: 0.7rem;">Dispatches Hindi and Chhattisgarhi localized SMS</div>
+              </div>
+            </div>
+            <div style="background: #1e293b; padding: 10px; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-bullhorn" style="color: #ea4335; font-size: 1.2rem;"></i>
+              <div>
+                <strong>NDMA Coastal/Basin Siren Grid</strong>
+                <div style="color: var(--text-muted); font-size: 0.7rem;">Automated 120dB acoustic sirens along Kharun causeway</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HUMAN APPROVAL GATE -->
+        <div class="approval-gate-box" id="box-approval-gate">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-shield-halved" style="color: var(--color-alert-red);"></i>
+            <strong style="color: #ffffff; font-size: 0.82rem;">Human Officer Authorization Required</strong>
+          </div>
+          <p style="font-size: 0.72rem; color: var(--text-secondary);">
+            Per National Disaster Management Authority (NDMA) guidelines, emergency broadcasts to public cellular grids require explicit human verification before release.
+          </p>
+          <div style="display: flex; gap: 10px; align-items: center; margin-top: 4px;">
+            <input type="text" id="officer-id-input" class="input-custom" placeholder="Duty Officer ID / Name" value="EOC Chief Controller (ID: CG-EOC-904)" style="flex: 1;">
+          </div>
+        </div>
+
+        <div id="dispatch-success-banner" style="display: none; background: rgba(52, 168, 83, 0.15); border: 1px solid var(--color-safe-green); border-radius: var(--radius-md); padding: 12px; color: #a7f3d0; font-size: 0.78rem;">
+          <i class="fa-solid fa-circle-check" style="color: var(--color-safe-green); margin-right: 6px;"></i>
+          <strong>ALERT DISPATCHED:</strong> Broadcast successfully transmitted across Cell Broadcast CB-4370 and SMS Gateway.
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-preset" onclick="closeCapModal()">Cancel</button>
+        <button class="btn-danger" id="btn-approve-dispatch" onclick="triggerApproveAndDispatch()">
+          <i class="fa-solid fa-paper-plane"></i> Approve & Dispatch Broadcast
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gemini Key Configuration Modal -->
+  <div class="modal-overlay" id="modal-gemini-key">
+    <div class="modal-content" style="max-width: 480px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-key" style="color: var(--color-google-blue);"></i>
+          <span>Configure Google Gemini API Key</span>
+        </div>
+        <button class="btn-close" onclick="closeKeyModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4;">
+          Targeting model: <code style="color: #60a5fa;">gemini-3.7-flash</code> via the updated <code style="color: #60a5fa;">google-genai</code> SDK.
+          If no key is configured, PRAVAH automatically uses its built-in resilient hydrological NLP engine so judges can test every feature offline.
+        </p>
+        <div class="form-group" style="margin-top: 10px;">
+          <label class="form-label">GEMINI_API_KEY</label>
+          <input type="password" id="input-gemini-key" class="input-custom" placeholder="AIzaSy...">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-preset" onclick="closeKeyModal()">Close</button>
+        <button class="btn-primary" onclick="saveGeminiKey()">Save Key</button>
+      </div>
+    </div>
+  <!-- 30-Second Hackathon Winning Pitch Teleprompter Modal -->
+  <div class="modal-overlay" id="modal-pitch-script">
+    <div class="modal-content" style="max-width: 640px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-microphone-lines" style="color: var(--color-alert-red);"></i>
+          <span>Live 30-Second Winning Pitch Teleprompter</span>
+        </div>
+        <button class="btn-close" onclick="closePitchModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">
+          Follow this structured 3-part script when demoing PRAVAH to hackathon judges:
+        </p>
+
+        <!-- Step 1: The Hook -->
+        <div class="pitch-step-box hook">
+          <div class="pitch-timing">Step 1: The Hook (0s – 10s)</div>
+          <div class="pitch-quote">
+            "When the Mahanadi basin floods, standard maps just show passive blue polygons. But an ambulance driver needs to know: <strong>Can my vehicle cross the Mahadev Ghat causeway right now?</strong>"
+          </div>
+          <div class="pitch-action-cue">
+            🎯 Action: Point to the Mahadev Ghat Causeway node on the map.
+          </div>
+        </div>
+
+        <!-- Step 2: The Tech -->
+        <div class="pitch-step-box tech">
+          <div class="pitch-timing">Step 2: The Tech (10s – 20s)</div>
+          <div class="pitch-quote">
+            "<strong>PRAVAH</strong> dynamically recalculates road edge weights using vehicle intake clearance rules. When water rises above 0.6m, standard personal cars and light ambulances are blocked, and our engine automatically identifies isolated villages and reroutes emergency traffic."
+          </div>
+          <div class="pitch-action-cue">
+            🎯 Action: Show the Dijkstra formula and the active glowing route line.
+          </div>
+        </div>
+
+        <!-- Step 3: The Live Demo -->
+        <div class="pitch-step-box demo">
+          <div class="pitch-timing">Step 3: The Live Demo (20s – 30s)</div>
+          <div class="pitch-quote">
+            "Watch this: as I move the surge slider from 0.35m to 0.75m, the road edges turn red, the path dynamically recalculates around high ground, and with one click, Gemini 3.7 Flash auto-drafts a multilingual CAP alert in Hindi and authentic Chhattisgarhi for first responders."
+          </div>
+          <div class="pitch-action-cue">
+            🎯 Action: Move the slider to 0.75m live, then click "Draft Multilingual CAP Alert".
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" onclick="closePitchModal()">Got it, Start Pitch!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- PRAVAH Control Room JavaScript Engine -->
+  <script src="/static/app.js"></script>
+
+</body>
+</html>
