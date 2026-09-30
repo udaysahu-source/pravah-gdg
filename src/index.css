@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #111111;
+  --color-offwhite: #F4F2EC;
+  --color-warmgray: #A7A39A;
+  --color-accent: #FF4500;
+
+  --font-display: 'Bebas Neue', 'Archivo Black', -apple-system, sans-serif;
+  --font-heading: 'Archivo Black', sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+:root {
+  --primary: #111111;
+  --offwhite: #F4F2EC;
+  --warmgray: #A7A39A;
+  --accent: #FF4500;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF4500;
+}
+
+/* Focus outline */
+*:focus-visible {
+  outline: 2px solid #FF4500;
+  outline-offset: 3px;
+}
+
+/* Subtle grid line backgrounds */
+.bg-grid-pattern {
+  background-image: linear-gradient(to right, rgba(17, 17, 17, 0.06) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(17, 17, 17, 0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.bg-grid-dark {
+  background-image: linear-gradient(to right, rgba(244, 242, 236, 0.05) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(244, 242, 236, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.bg-dots-pattern {
+  background-image: radial-gradient(rgba(17, 17, 17, 0.12) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.bg-dots-dark {
+  background-image: radial-gradient(rgba(244, 242, 236, 0.12) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Subtle grain overlay */
+.grain-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Marquee infinite scroll */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Pulse radar effect */
+@keyframes radar-pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+.radar-ping {
+  animation: radar-pulse 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Hide default cursor on desktop when custom cursor is active */
+@media (min-width: 1024px) {
+  .custom-cursor-active {
+    cursor: none;
+  }
+  .custom-cursor-active a,
+  .custom-cursor-active button,
+  .custom-cursor-active [role="button"] {
+    cursor: none;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-marquee {
+    animation: none;
+    transform: none;
+  }
+}
